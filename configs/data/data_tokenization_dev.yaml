@@ -1,0 +1,41 @@
+_target_: gabbro.data.iterable_dataset_shower.IterableCaloDatamodule
+
+
+defaults:
+  - defaults.yaml
+data_dir:  /data/dust/user/korcariw/maxwell.merged/CaloClouds/dataset/
+h5file: True
+batch_size: 64
+n_files_at_once: 1
+
+
+
+dataset_kwargs_common:
+  feature_dict:
+    x: None
+    y: None
+    z: None
+    energy: None
+  pad_length: 1700
+  n_files_at_once: 1
+  h5file: True
+  labels_to_load:
+    - label_Shower
+
+dataset_kwargs_train:
+  max_n_files_per_type: null
+  files_dict:
+    QCD:
+      - ${data.data_dir}/showers/photons_10_100GeV_float32_sorted_train.h5
+dataset_kwargs_val:
+  max_n_files_per_type: null
+  files_dict:
+    QCD:
+      - ${data.data_dir}/showers/photons_10_100GeV_float32_sorted_val.h5
+
+
+dataset_kwargs_test:
+  max_n_files_per_type: null
+  files_dict:
+    QCD:
+      - ${data.data_dir}/showers/photons_10_100GeV_float32_sorted_test.h5

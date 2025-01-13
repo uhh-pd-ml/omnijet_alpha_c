@@ -1,0 +1,134 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example_experiment_backbone_generative
+
+defaults:
+  # - override /data: tokenized_classification.yaml
+  # - override /data: iter_dataset_jetclass_classification_top_vs_qcd
+  - override /data: data_generative_e_sorted
+  - override /model: backbone_generative.yaml
+  - override /callbacks: callbacks_for_generative_training.yaml
+  - override /trainer: ddp.yaml
+#  - override /trainer: gpu.yaml
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+# add here checkpoint to continue training
+#ckpt_path: "path/to/your/checkpoint.ckpt"
+
+project_name: "example_backbone"
+tags: ["generative"]
+
+run_note: ""
+
+seed: 44
+
+load_weights_from: False
+load_weights_strict: False
+
+
+data:
+  batch_size: 16 # NOTE: adapt the limit_train_batches accordingly
+
+  data_dir: /data/dust/user/rosehenn/gabbro/compare/2024-09-21_16-54-39_max-wng062_CerousLocknut/  # this is the path to the tokenized dataset
+
+  dataset_kwargs_train:
+    max_n_files_per_type: 1
+    n_shower_per_file: 1000
+  dataset_kwargs_val:
+    n_shower_per_file: 100
+  dataset_kwargs_test:
+    n_shower_per_file: 100
+  dataset_kwargs_common:
+    load_only_once: true
+    pad_length: 1700
+    n_files_at_once: 1
+    h5file: True
+    random_seed_for_per_file_shuffling: 42
+    feature_dict:
+      # part_token_id: {}
+      part_token_id_without_last: {}  # <-- this will be the input for the gen. model
+      part_token_id_without_first: {} # <-- this will be the target for the gen. model
+    token_id_cfg:
+      remove_start_token: false
+      remove_end_token: false
+      shift_tokens_minus_one: false
+
+callbacks:
+  generative_callback:
+    n_val_gen_jets: 10   # increased again for better comparison
+    starting_at_epoch: 300
+    every_n_epochs: 1
+    batch_size_for_generation: 8
+    data_dir: ${data.data_dir}
+    seed_shuffle_val_data: 2 # loads the validation data (not tokeneized) for plotting
+    plot_best_checkpoint: False #If you want to plot the best Checkpoint. False plots the current checkpoint.
+  early_stopping:
+    patience: 300 # number of checks with no improvement after which training will be stopped
+trainer:
+  max_steps: 10000000
+  gradient_clip_val: 1
+  log_every_n_steps: 400
+  limit_train_batches: 1.0 # 11.875 with batch size 64, to have 760000 samples per epoch # increased again
+  limit_val_batches: 1.0 # 2.900 with batch size 64, to have 185k samples per epoch # increased again
+  # precision: "bf16-true"
+  # num_sanity_val_steps: 10
+
+# setting load_weights_from will load the weights from the given checkpoint, but start training from scratch
+# load_weights_from: <path_to_checkpoint>
+
+model:
+  # --- model architecture configuration ---
+  # model_class_name: "BackboneWithClasshead"
+  # model_kwargs_loaded: null
+  token_dir: ${data.data_dir}
+  exclude_padded_values_from_loss: True
+  model_kwargs:
+    # keep_backbone_fixed: false
+    # ---
+    return_embeddings: True  # meaning that the new head structure is used instead of the old one
+    # n_out_nodes: 2
+    # if you want to transfer the weights from a backbone model, you can specify the path here
+    # backbone_weights_path: "path/to/your/backbone_weights.ckpt"
+    embedding_dim: 256
+    attention_dropout: 0.0
+    vocab_size: 65538 #adjust to your codebook size
+    stop_token_weight: 1.0
+    max_sequence_len: 1700
+    temperature: 1.0
+    stop_token_threshold: 0.0
+    n_GPT_blocks: 3
+    n_heads: 8
+    verbosity: true
+  # --- optimizer configuration ---
+  optimizer:
+    _target_: gabbro.utils.optimizer.ranger.Ranger
+    _partial_: true
+    lr: 0.001
+    weight_decay: 1e-2
+    betas: [0.95, 0.999]
+    eps: 1e-5
+    alpha: 0.5
+    k: 6
+
+  # --- learning rate scheduler ---
+  scheduler:
+    _target_: torch.optim.lr_scheduler.ConstantLR
+    _partial_: true
+    total_iters: 1
+    factor: 1.0
+  # --- learning rate scheduler ---
+
+task_name: "omnijet_backbone"
+
+logger:
+  wandb:
+    project: ${project_name}
+    tags: ${tags}
+    # group: ${project_name}
+    name: ${task_name}
+  comet:
+    experiment_name: null
+    project_name: ${project_name}

@@ -1,0 +1,13 @@
+data:
+
+    network: "2024-09-21_16-54-39_max-wng062_CerousLocknut"
+    epoch: "epoch_231_loss_0.17179.ckpt"
+
+
+    tokenize: True # Will transform the data into tokens and save it to the compare directory
+    reconstruct: True # Will transform the tokens back into the original data and save it to the compare directory
+    save_config: True # Will save the configuration file to the compare directory
+    save_ckpt: True # Will save the checkpoint file to the compare directory
+    train: True # Will transform the train data
+    test: False # Will transform the test data
+    val: False # Will transform the validation data

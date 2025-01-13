@@ -1,0 +1,5 @@
+_target_: gabbro.data.datamodule_tokenized_jetclass.TokenJetClassDataModule
+
+
+defaults:
+  - defaults.yaml

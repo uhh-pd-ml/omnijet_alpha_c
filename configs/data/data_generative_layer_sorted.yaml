@@ -1,0 +1,43 @@
+_target_: gabbro.data.iterable_dataset_shower.IterableCaloDatamodule
+
+
+defaults:
+  - defaults.yaml
+
+
+h5file: True
+batch_size: 64
+n_files_at_once: 1
+
+
+
+dataset_kwargs_common:
+  feature_dict:
+    part_token_id_without_last: None
+    part_token_id_without_first: None
+  pad_length: 1700
+  n_files_at_once: 1
+  h5file: True
+  # n_shower_per_file: 760000
+  labels_to_load:
+    - label_Shower
+
+dataset_kwargs_train:
+  max_n_files_per_type: 1
+  n_jets_per_file: null
+  files_dict:
+    shower:
+      - ${data.data_dir}/tokenized_train_layer_sorted.parquet
+
+dataset_kwargs_val:
+  max_n_files_per_type: 1
+  files_dict:
+    shower:
+      - ${data.data_dir}/tokenized_val_layer_sorted.parquet
+
+
+dataset_kwargs_test:
+  max_n_files_per_type: 1
+  files_dict:
+    shower:
+      - ${data.data_dir}/tokenized_test_layer_sorted.parquet

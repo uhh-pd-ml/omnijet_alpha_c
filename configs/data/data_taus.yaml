@@ -1,0 +1,39 @@
+_target_: gabbro.data.dataset_taus.TauDataModule
+# file_train: /beegfs/desy/user/birkjosc/datasets/landscape/TopLandscape/train_file.parquet
+# file_val: /beegfs/desy/user/birkjosc/datasets/landscape/TopLandscape/val_file.parquet
+# file_test: /beegfs/desy/user/birkjosc/datasets/landscape/TopLandscape/test_file.parquet
+# file_train: /beegfs/desy/user/birkjosc/datasets/landscape/TopLandscape/train_file_1000.parquet
+# file_val: /beegfs/desy/user/birkjosc/datasets/landscape/TopLandscape/val_file_1000.parquet
+# file_test: /beegfs/desy/user/birkjosc/datasets/landscape/TopLandscape/test_file_1000.parquet
+# n_jets_train: null
+# n_jets_val: null
+# n_jets_test: null
+batch_size: 512
+pad_length: 128
+num_workers: 32
+pin_memory: False
+
+# dummy keys to make compatible with other dataset structure
+data_dir: null
+dataset_kwargs_common:
+  pad_length: 128
+  n_files_at_once: null
+  labels_to_load: null
+  feature_dict:
+    part_pt: {multiply_by: 1, subtract_by: 1.8, func: "np.log", inv_func: "np.exp"}
+    # part_pt: {multiply_by: 0.05, subtract_by: 12}
+    part_etarel: {multiply_by: 3, larger_than: -0.8, smaller_than: 0.8}
+    part_phirel: {multiply_by: 3, larger_than: -0.8, smaller_than: 0.8}
+
+dataset_kwargs_train:
+  max_n_files_per_type: null
+  n_jets_per_file: null
+  files_dict: null
+
+dataset_kwargs_val:
+  max_n_files_per_type: 1
+  files_dict: null
+
+dataset_kwargs_test:
+  max_n_files_per_type: 1
+  files_dict: null
