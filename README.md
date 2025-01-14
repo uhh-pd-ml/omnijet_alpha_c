@@ -11,6 +11,7 @@ Joschka Birk, Frank Gaede, Anna Hallin, Gregor Kasieczka, Martina Mozzanica, Hen
 
 This repository contains the code for the results presented in the paper [`OmniJet-α_C: Learning point cloud calorimeter simulations using generative transformers`](https://arxiv.org/abs/2501.05534)
 The documentation of the original OmniJet-α can be found at [uhh-pd-ml/omnijet_alpha](https://github.com/uhh-pd-ml/omnijet_alpha)
+
 **Abstract:**
 
 ```
