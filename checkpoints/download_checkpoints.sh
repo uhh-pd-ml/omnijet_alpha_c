@@ -1,4 +1,4 @@
 #!/bin/bash
-curl --output checkpoints.tar #TODO: Add link to checkpoints.tar
-tar -xvf checkpoints.tar
-rm -rf checkpoints.tar
+curl --output https://syncandshare.desy.de/index.php/s/PDJmkdBodD9TYRB/download\?path\=\&files\=checkpoints.tar.gz
+tar -xvf checkpoints.tar.gz
+rm -rf checkpoints.tar.gz
